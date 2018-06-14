@@ -1,8 +1,25 @@
+#----------------------------------------#
+
+#MOTION DETECT. USING PYTHON3 AND OPENCV #
+
+#--------AUTHOR- Ritesh Aggarwal---------#
+
+#-----------Language->Python3------------#
+
+#-----------Github:->imkiller32----------#
+
+#----------------Appendix----------------#
+
+# Select Camera According to your Laptop.#
+#for more camera hint ...comment below
+
+#---------Enjoy Your Live Feed----------#
+
 import cv2
 import numpy as np
 
 def main():
-    
+   #setting resolution 
     w = 800
     h = 600
     
