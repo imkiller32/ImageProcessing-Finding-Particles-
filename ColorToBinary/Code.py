@@ -8,7 +8,6 @@
 
 import cv2
 import PIL.Image, PIL.ImageTk
-import os
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog as fd
@@ -50,13 +49,20 @@ converted.pack(padx=5,pady=5)
 
 def OPEN():
     global imgpath
-    try:
-        imgpath = (fd.askopenfile().name)
-        img = ImageTk.PhotoImage(Image.open(imgpath))
-        original.config(image = img)
-        original.img=img
-    except:
-        messagebox.showinfo(title = 'Error', message = 'Select a File')
+    imgpath = (fd.askopenfile().name)
+    timg = Image.open(imgpath)
+    img = ImageTk.PhotoImage(timg)
+    width, height = 400, 480
+
+    if img.width() < 400:
+        width = img.width()
+    if img.height() < 480:
+        height = img.height()
+        
+    s_img = timg.resize((width,height),Image.ANTIALIAS)
+    s_img = ImageTk.PhotoImage(s_img)
+    original.config(image = s_img)
+    original.img=s_img
 
 def CONVERT():
     if(imgpath == ""):
@@ -65,16 +71,33 @@ def CONVERT():
     global cimg
     cimg = cv2.imread(imgpath,0)
     r,c = cimg.shape
-    
+    mod = r*c
+    sum = 0
     for i in range(r):
         for j in range(c):
-            if(cimg[i][j]>128):
+            sum=(sum+cimg[i][j])
+    threshold = sum//(mod)
+    for i in range(r):
+        for j in range(c):
+            if(cimg[i][j]>threshold):
                 cimg[i][j]=255
             else:
                 cimg[i][j]=0
     nimg = PIL.ImageTk.PhotoImage(PIL.Image.fromarray(cimg))
-    converted.config(image = nimg)
-    converted.img=nimg
+    timg = Image.fromarray(cimg)
+    width, height = 400, 480
+    
+    if nimg.width() < 400:
+        width = nimg.width()
+    if nimg.height() < 480:
+        height = nimg.height()
+
+    
+    s_img = timg.resize((width,height),Image.ANTIALIAS)
+    s_img = ImageTk.PhotoImage(s_img)
+    
+    converted.config(image = s_img)
+    converted.img=s_img
     save.config(state = '!disabled')
 
 def SAVE():
