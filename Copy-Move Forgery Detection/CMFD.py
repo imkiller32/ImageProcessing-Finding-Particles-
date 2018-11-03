@@ -15,16 +15,17 @@ import numpy
 import math
 import matplotlib.pyplot as plt
 
-#path="C:\\Users\\imkiller\\Desktop\\Python\\Dataset\\"
 path="C:\\Users\\rites\\Desktop\\"
 imgpath=path+"image.png"
 
-#img=cv2.imread(imgpath,0)
-img = numpy.random.randint(0,256, size=(32,32))
+img=cv2.imread(imgpath,0)
+#img = numpy.random.randint(0,256, size=(32,32))
 #print(img)
 img_r,img_c=img.shape
-#print(img_r,img_c)
+print(img_r,img_c)
 window_r,window_c=16,16
+T1 = 100
+T2 = 10
 
 titles=['Original','Thresholded']
 
@@ -48,7 +49,7 @@ for r in range(0,img_r-window_r+1):
         col.append(c)
         block=block+1
         
-print(block)
+##print(block)
 res=False
 array_fv=[]
 x=0
@@ -106,16 +107,38 @@ for curr in range(0,block):
 
     for i in range(5,9):
         feature_vector[i] = math.floor(255*((feature_vector[i]-m2)/(m1-m2)))
-    
-    array_fv.append(feature_vector)
-    print(array_fv[x])
+
+    Tuple=(feature_vector,x)
+    array_fv.append(Tuple)
+    #print(array_fv[x])
     x+=1
 
-print(x)
-            
 
+def takeFirst(element):
+    return(element[0])
 
-        
+array_fv.sort(key=takeFirst)
+##print(x)
+##print("",end='\n')
+##for i in range(0,x):
+##    print(array_fv[i])
+
+for i in range(0,x-1):
+    shift_vector = []
+    j=0
+    val=0
+    for element in array_fv[i+1][0]:
+        shift_vector.append(element-array_fv[i][0][j])
+        val = val*10 + shift_vector[j]
+        j+=1
+    #print(shift_vector)
+    if(val > T1):
+        img[row[array_fv[i+1][1]]][col[array_fv[i+1][1]]] = 0
+        img[row[array_fv[i][1]]][col[array_fv[i][1]]] = 0
+    
+img = cv2.medianBlur(img, 3)
+print(img)
+
 if(res==True):
     print("CMFD Detected.")
 else:
